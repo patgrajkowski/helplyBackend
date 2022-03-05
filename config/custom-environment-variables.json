@@ -1,0 +1,5 @@
+{
+  "jwtSecret": "JWT_SECRET",
+  "mongoUrl": "MONGO_URL",
+  "refreshSecret": "REFRESH_SECRET"
+}
