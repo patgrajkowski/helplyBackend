@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'https://helply.vercel.app/',
+    origin: 'https://helply.vercel.app',
     credentials: true,
   })
 );
