@@ -31,6 +31,7 @@ router.post('/login', async (req, res) => {
   });
   res.status(200).send({ token, isAdmin: user.isAdmin });
 });
+
 router.post('/logout', async (req, res) => {
   res.cookie('id', '', {
     httpOnly: true,
@@ -65,6 +66,7 @@ const validate = (req) => {
 
   return Joi.validate(req, schema);
 };
+
 exports.createAccesToken = createAccesToken;
 exports.createRefreshToken = createRefreshToken;
 module.exports = router;

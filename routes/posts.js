@@ -6,7 +6,9 @@ const express = require('express');
 const { User } = require('../models/user');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+// GET
+
+router.get('/all', async (req, res) => {
   console.log(req.query.limit);
   const posts = req.query.limit
     ? await Post.find().sort({ created: 1 }).limit(Number(req.query.limit))
@@ -14,7 +16,7 @@ router.get('/', async (req, res) => {
   res.send(posts);
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/postid/:id', async (req, res) => {
   try {
     const { title, price, time, categories, level, description, userId } =
       await Post.findById(req.params.id);
@@ -37,6 +39,7 @@ router.get('/:id', async (req, res) => {
     console.log(error);
   }
 });
+// POST
 
 router.post('/', auth, async (req, res) => {
   const { title, price, time, categories, level, description } = req.body;
@@ -63,6 +66,15 @@ router.post('/', auth, async (req, res) => {
     res.status(201).send(post._id);
   } catch (e) {
     res.status(400).send(e._message);
+  }
+});
+
+router.post('/user/me', auth, async (req, res) => {
+  try {
+    const posts = await Post.find({ userId: req.user._id });
+    res.send(posts);
+  } catch (error) {
+    console.log(error);
   }
 });
 
