@@ -1,22 +1,29 @@
-const { Post, validate } = require('../models/post');
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
-const mongoose = require('mongoose');
-const express = require('express');
-const { User } = require('../models/user');
+const { Post, validate } = require("../models/post");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
+const mongoose = require("mongoose");
+const express = require("express");
+const { User } = require("../models/user");
 const router = express.Router();
 
 // GET
 
-router.get('/all', async (req, res) => {
-  console.log(req.query.limit);
-  const posts = req.query.limit
-    ? await Post.find().sort({ created: 1 }).limit(Number(req.query.limit))
-    : await Post.find().sort({ created: 1 });
-  res.send(posts);
+router.get("/all", async (req, res) => {
+  if (req.query.limit) {
+    if (req.query.category) {
+      const posts = await Post.find({ categories: { $in: req.query.category } })
+        .sort({ created: 1 })
+        .limit(Number(req.query.limit));
+      return res.send(posts);
+    }
+    const posts = await Post.find()
+      .sort({ created: 1 })
+      .limit(Number(req.query.limit));
+    res.send(posts);
+  }
 });
 
-router.get('/postid/:id', async (req, res) => {
+router.get("/postid/:id", async (req, res) => {
   try {
     const { title, price, time, categories, level, description, userId } =
       await Post.findById(req.params.id);
@@ -41,7 +48,7 @@ router.get('/postid/:id', async (req, res) => {
 });
 // POST
 
-router.post('/', auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { title, price, time, categories, level, description } = req.body;
   try {
     const { error } = validate({
@@ -69,7 +76,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-router.post('/user/me', auth, async (req, res) => {
+router.post("/user/me", auth, async (req, res) => {
   try {
     const posts = await Post.find({ userId: req.user._id });
     res.send(posts);
